@@ -1,17 +1,22 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import useMessages from "./useMessages";
-import useKeyboardListener from "./useKeyboardListener";
+import useMessages from "../_hooks/useMessages";
+import useFriends from "../_hooks/useFriends";
+import useKeyboardListener from "../_hooks/useKeyboardListener";
+import Sidebar from "./_components/sidebar";
+import Leftpane from "./_components/leftpane";
+import UserInfo from "./_components/userInfo";
+import MessageList from "./_components/messagelist";
 
-type Props = {
+type ComponentProps = {
   username: string;
 };
 
-function Chat({ username }: Props) {
+function Chat({ username }: ComponentProps) {
   const [messages, setMessages, status] = useMessages();
+  const [friends, setFriends, fstatus] = useFriends();
   const [messageInput, setMessageInput] = useState("");
   const socket = useRef<WebSocket | null>(null);
-  const [reconnectToggle, setReconnectToggle] = useState(false);
   const sendMessageRef = useRef(null);
   const chatRef = useRef<HTMLDivElement>(null);
 
@@ -47,7 +52,6 @@ function Chat({ username }: Props) {
 
     socket.current.onmessage = (event) => {
       console.log("onmessage");
-      console.log(event);
       const receivedMessage = JSON.parse(event.data).message;
       setMessages((prev) => [...prev, receivedMessage]);
     };
@@ -55,7 +59,8 @@ function Chat({ username }: Props) {
     return () => {
       socket.current?.close();
     };
-  }, [reconnectToggle]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     // This should only fire when the scroll is close to the bottom when the message arrives
@@ -68,23 +73,11 @@ function Chat({ username }: Props) {
 
   return (
     <div className="flex flex-row">
-      <div className="min-h-screen w-20 bg-slate-900"></div>
-      <div className="flex flex-col min-h-screen w-96 bg-slate-800">
-        <div className="grow"></div>
-        <div className="flex m-2 gap-2">
-          <div className="avatar online placeholder">
-            <div className="bg-neutral text-neutral-content w-12 rounded-full">
-              <span className="text-xl">
-                {username.slice(0, 1).toUpperCase()}
-              </span>
-            </div>
-          </div>
-          <div>
-            <p>{username}</p>
-            <p>Online</p>
-          </div>
-        </div>
-      </div>
+      <Sidebar />
+      <Leftpane>
+        <MessageList />
+        <UserInfo username={username} status="Online" />
+      </Leftpane>
       <div className="flex min-h-screen max-h-screen flex-col justify-end grow bg-slate-700">
         <div
           ref={chatRef}
@@ -139,16 +132,6 @@ function Chat({ username }: Props) {
           >
             Send
           </button>
-          <p>
-            {/*socket.current?.readyState === 3 ? (
-                <button onClick={() => setReconnectToggle(!reconnectToggle)}>
-                  reconnect
-                </button>
-              ) : (
-                socket.current?.readyState
-              )*/}
-          </p>
-          {/*<p>{socket.current === null && ("no socket :(")}</p>*/}
         </div>
       </div>
       <div className="sm:hidden lg:block min-h-screen w-80 bg-slate-800"></div>

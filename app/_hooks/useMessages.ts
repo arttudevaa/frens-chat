@@ -1,4 +1,3 @@
-import { headers } from "next/headers";
 import React, { useEffect, useState } from "react";
 
 interface Message {

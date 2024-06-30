@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Chat from "./chat";
-import useKeyboardListener from "./useKeyboardListener";
+import useKeyboardListener from "../_hooks/useKeyboardListener";
 
-function App() {
+function Page() {
   const [username, setUsername] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -56,4 +56,4 @@ function App() {
   );
 }
 
-export default App;
+export default Page;
