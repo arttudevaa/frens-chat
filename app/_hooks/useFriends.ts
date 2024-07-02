@@ -19,7 +19,7 @@ const useFriends = (): ReturnType => {
     const [status, setStatus] = useState<Status>('loading')
 
     useEffect(() => {
-        const fetchMessageHistory = async () => {
+        const fetchFriends = async () => {
           try {
             const response = await fetch(`http://localhost:3001/api/user/123/friends`);
             const data = await response.json();
@@ -31,7 +31,7 @@ const useFriends = (): ReturnType => {
           }
         };
     
-        fetchMessageHistory();
+        fetchFriends();
     }, [])
 
     return [friends, setFriends, status]

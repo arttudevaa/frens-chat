@@ -9,18 +9,44 @@ function Page() {
   const inputRef = useRef<HTMLInputElement>(null);
   useKeyboardListener("Enter", handleSetUsername);
 
-  function handleSetUsername() {
+  async function handleSetUsername() {
     if (!inputRef.current) {
       return;
     }
-    const value = inputRef.current.value;
-    if (value.trim() === "") {
+
+    const value = inputRef.current.value.trim();
+
+    if (value === "") {
       setErrorMsg("Username can't be empty");
       inputRef.current.value = "";
       inputRef.current.focus();
-    } else {
-      setUsername(value);
+      return;
     }
+
+    try {
+      const response = await register(value);
+
+      if (response.status === 200) {
+        const data = await response.json();
+        console.log(data);
+        setUsername(data.username);
+        setErrorMsg("");
+      } else {
+        const errorData = await response.json();
+        setErrorMsg(errorData.error || "An unknown error occurred");
+      }
+    } catch (error) {
+      setErrorMsg("An error occurred");
+    }
+  }
+
+  async function register(username: string) {
+    const response = await fetch("http://localhost:3001/register", {
+      method: "POST",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify({ username }),
+    });
+    return response;
   }
 
   return (

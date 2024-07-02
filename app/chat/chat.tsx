@@ -86,7 +86,9 @@ function Chat({ username }: ComponentProps) {
           {messages.map((message, index) => (
             <div
               key={message.id}
-              className={`chat ${index % 2 == 0 ? "chat-end" : "chat-start"}`}
+              className={`chat ${
+                message.sender === username ? "chat-end" : "chat-start"
+              }`}
             >
               <div className="chat-header">
                 {message.sender}
